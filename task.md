@@ -147,44 +147,44 @@
 ## Task 3 — Bookings, Maintenance & Audit
 
 ### 3.1 Resource Booking
-- [ ] `app/(dashboard)/bookings/page.tsx` — Calendar + Table views
-- [ ] `app/(dashboard)/bookings/new/page.tsx` — booking form with overlap validation
-- [ ] Server Actions: `createBooking`, `cancelBooking`, `rescheduleBooking`
-- [ ] Overlap rule: `startTime < existingEnd AND endTime > existingStart` (adjacent = allowed)
+- [x] `app/(dashboard)/bookings/page.tsx` — Calendar + Table views
+- [x] `app/(dashboard)/bookings/new/page.tsx` — booking form with overlap validation
+- [x] Server Actions: `createBooking`, `cancelBooking`, `rescheduleBooking`
+- [x] Overlap rule: `startTime < existingEnd AND endTime > existingStart` (adjacent = allowed)
 
 ### 3.2 Maintenance Management
-- [ ] `app/(dashboard)/maintenance/page.tsx` — TanStack Table with filters
-- [ ] `components/maintenance/MaintenanceRequestForm.tsx` — Zod-validated form
-- [ ] Workflow: PENDING → APPROVED/REJECTED → IN_PROGRESS → RESOLVED
-- [ ] Asset status side-effects: APPROVED → UNDER_MAINTENANCE; RESOLVED → AVAILABLE
-- [ ] Server Actions: `createMaintenanceRequest`, `approveMaintenanceRequest`, `rejectMaintenanceRequest`, `assignTechnician`, `resolveMaintenanceRequest`
+- [x] `app/(dashboard)/maintenance/page.tsx` — TanStack Table with filters
+- [x] `components/maintenance/MaintenanceRequestForm.tsx` — Zod-validated form
+- [x] Workflow: PENDING → APPROVED/REJECTED → IN_PROGRESS → RESOLVED
+- [x] Asset status side-effects: APPROVED → UNDER_MAINTENANCE; RESOLVED → AVAILABLE
+- [x] Server Actions: `createMaintenanceRequest`, `approveMaintenanceRequest`, `rejectMaintenanceRequest`, `assignTechnician`, `resolveMaintenanceRequest`
 
 ### 3.3 Asset Audit
-- [ ] `app/(dashboard)/audit/page.tsx` — Audit cycle list
-- [ ] `app/(dashboard)/audit/[cycleId]/page.tsx` — cycle detail, per-asset marking
-- [ ] `components/audit/AuditCycleForm.tsx` — scope, date range, auditor multi-select
-- [ ] Auto-generated discrepancy report for flagged assets
-- [ ] Close cycle → lock + update Missing assets to Lost status
-- [ ] Server Actions: `createAuditCycle`, `assignAuditors`, `recordAuditEntry`, `closeAuditCycle`
+- [x] `app/(dashboard)/audit/page.tsx` — Audit cycle list
+- [x] `app/(dashboard)/audit/[cycleId]/page.tsx` — cycle detail, per-asset marking
+- [x] `components/audit/AuditCycleForm.tsx` — scope, date range, auditor multi-select
+- [x] Auto-generated discrepancy report for flagged assets
+- [x] Close cycle → lock + update Missing assets to Lost status
+- [x] Server Actions: `createAuditCycle`, `assignAuditors`, `recordAuditEntry`, `closeAuditCycle`
 
 ### 3.4 Notifications & Activity Log
-- [ ] `lib/notifications.ts` — `createNotification()` helper
-- [ ] `lib/activity-log.ts` — `logActivity()` helper
-- [ ] `app/api/notifications/route.ts` — GET (paginated) + PATCH (mark read)
-- [ ] `app/(dashboard)/notifications/page.tsx` — notification feed + admin activity log
-- [ ] Notification triggers wired into all relevant Server Actions:
-  - [ ] Asset Allocated, Transfer Approved/Rejected
-  - [ ] Maintenance Approved/Rejected
-  - [ ] Booking Confirmed/Cancelled/Reminder
-  - [ ] Overdue Return Alert
-  - [ ] Audit Discrepancy Flagged
+- [x] `lib/notifications.ts` — `createNotification()` helper
+- [x] `lib/activity-log.ts` — `logActivity()` helper
+- [x] `app/api/notifications/route.ts` — GET (paginated) + PATCH (mark read)
+- [x] `app/(dashboard)/notifications/page.tsx` — notification feed + admin activity log
+- [x] Notification triggers wired into all relevant Server Actions:
+  - [x] Asset Allocated, Transfer Approved/Rejected
+  - [x] Maintenance Approved/Rejected
+  - [x] Booking Confirmed/Cancelled/Reminder
+  - [x] Overdue Return Alert
+  - [x] Audit Discrepancy Flagged
 
 #### Task 3 Verification
-- [ ] Booking overlap correctly rejected; adjacent booking allowed
-- [ ] Maintenance approval flips asset to UNDER_MAINTENANCE
-- [ ] Maintenance resolution flips asset back to AVAILABLE
-- [ ] Audit cycle close updates Missing → Lost status on assets
-- [ ] Notifications appear after all key events
+- [x] Booking overlap correctly rejected; adjacent booking allowed
+- [x] Maintenance approval flips asset to UNDER_MAINTENANCE
+- [x] Maintenance resolution flips asset back to AVAILABLE
+- [x] Audit cycle close updates Missing → Lost status on assets
+- [x] Notifications appear after all key events
 
 ---
 
