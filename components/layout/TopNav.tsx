@@ -5,8 +5,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "@/lib/auth-client";
 import useUIStore from "@/store/useUIStore";
 import useNotificationStore from "@/store/useNotificationStore";
-import { Bell, Menu, LogOut, User as UserIcon, ShieldAlert } from "lucide-react";
+import { Bell, Menu, LogOut, User as UserIcon, ShieldAlert, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme } from "@/context/ThemeContext";
+import { THEME_MODES } from "@/lib/constants/theme";
 
 interface TopNavProps {
   user: {
@@ -23,6 +25,7 @@ export default function TopNav({ user }: TopNavProps) {
   const { toggleSidebar } = useUIStore();
   const { unreadCount } = useNotificationStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const handleSignOut = async () => {
     try {
@@ -85,6 +88,20 @@ export default function TopNav({ user }: TopNavProps) {
 
       {/* Right side: Notifications & Profile Dropdown */}
       <div className="flex items-center gap-4">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+          title={theme === THEME_MODES.LIGHT ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          aria-label="Toggle theme"
+        >
+          {theme === THEME_MODES.LIGHT ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+        </button>
+
         {/* Notification bell */}
         <button className="relative flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer">
           <Bell className="h-5 w-5" />
