@@ -45,13 +45,20 @@ export default async function BookingsPage() {
     },
   });
 
-  // Convert dates to ISO strings to pass from Server to Client component safely
+  // Convert dates and nested assets to ISO strings/standard types to pass safely
   const serializedBookings = bookings.map((b) => ({
     ...b,
     startTime: b.startTime.toISOString(),
     endTime: b.endTime.toISOString(),
     createdAt: b.createdAt.toISOString(),
     updatedAt: b.updatedAt.toISOString(),
+    asset: b.asset ? {
+      ...b.asset,
+      acquisitionCost: b.asset.acquisitionCost.toString(),
+      acquisitionDate: b.asset.acquisitionDate.toISOString(),
+      createdAt: b.asset.createdAt.toISOString(),
+      updatedAt: b.asset.updatedAt.toISOString(),
+    } : null,
   }));
 
   const serializedAssets = bookableAssets.map((a) => ({

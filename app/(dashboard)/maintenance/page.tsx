@@ -68,12 +68,19 @@ export default async function MaintenancePage() {
     },
   });
 
-  // Serialize dates for Client Component safety
+  // Serialize dates and nested assets for Client Component safety
   const serializedRequests = requests.map((r) => ({
     ...r,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
     resolvedAt: r.resolvedAt?.toISOString() || null,
+    asset: r.asset ? {
+      ...r.asset,
+      acquisitionCost: r.asset.acquisitionCost.toString(),
+      acquisitionDate: r.asset.acquisitionDate.toISOString(),
+      createdAt: r.asset.createdAt.toISOString(),
+      updatedAt: r.asset.updatedAt.toISOString(),
+    } : null,
   }));
 
   const serializedAssets = assets.map((a) => ({

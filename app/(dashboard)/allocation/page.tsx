@@ -53,11 +53,32 @@ export default async function AllocationPage() {
     departmentId: session.user.departmentId || null,
   };
 
+  const serializedAllocations = allocations.map((alloc) => ({
+    ...alloc,
+    asset: alloc.asset ? {
+      ...alloc.asset,
+      acquisitionCost: Number(alloc.asset.acquisitionCost),
+    } : null,
+  }));
+
+  const serializedTransfers = transfers.map((transfer) => ({
+    ...transfer,
+    asset: transfer.asset ? {
+      ...transfer.asset,
+      acquisitionCost: Number(transfer.asset.acquisitionCost),
+    } : null,
+  }));
+
+  const serializedAssets = assets.map((asset) => ({
+    ...asset,
+    acquisitionCost: Number(asset.acquisitionCost),
+  }));
+
   return (
     <AllocationClient
-      allocations={allocations}
-      transfers={transfers}
-      assets={assets}
+      allocations={serializedAllocations}
+      transfers={serializedTransfers}
+      assets={serializedAssets}
       users={users}
       departments={departments}
       currentUser={currentUser}
