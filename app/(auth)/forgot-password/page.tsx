@@ -99,12 +99,17 @@ export default function ForgotPasswordPage() {
 
           <div className="mt-8">
             {isSent ? (
-              <div className="rounded-lg bg-teal-brand/10 p-6 text-sm text-teal-brand-foreground border border-teal-brand/20 space-y-3">
-                <span className="font-bold block text-base">📩 Email Sent</span>
-                <p>
-                  We have dispatched password recovery instructions to <strong>{email}</strong>.
+              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-6 text-sm space-y-3.5 animate-in fade-in duration-300">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                    <Mail className="h-4.5 w-4.5" />
+                  </span>
+                  <span className="font-bold text-foreground text-base">Email Sent Successfully</span>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  We have dispatched password recovery instructions to <strong className="text-foreground">{email}</strong>.
                 </p>
-                <p className="text-xs opacity-85">
+                <p className="text-2xs text-muted-foreground/80 leading-normal border-t border-emerald-500/10 pt-3">
                   Please check your spam folder if you do not receive the email in a few minutes.
                 </p>
               </div>
