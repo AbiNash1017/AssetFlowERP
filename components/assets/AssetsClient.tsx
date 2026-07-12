@@ -112,6 +112,20 @@ export default function AssetsClient({
       header: "Location",
     },
     {
+      id: "department",
+      header: "Department",
+      cell: ({ row }) => {
+        const activeAllocation = row.original.allocations?.[0];
+        if (!activeAllocation) return <span className="text-muted-foreground text-xs">-</span>;
+        const deptName = activeAllocation.department?.name || activeAllocation.user?.department?.name;
+        return deptName ? (
+          <span className="text-xs font-semibold text-foreground">{deptName}</span>
+        ) : (
+          <span className="text-muted-foreground text-xs">-</span>
+        );
+      },
+    },
+    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
