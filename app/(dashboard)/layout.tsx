@@ -4,6 +4,8 @@ import { getServerSession } from "@/lib/rbac-server";
 import Sidebar from "@/components/layout/Sidebar";
 import TopNav from "@/components/layout/TopNav";
 
+export const dynamic = "force-dynamic";
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
