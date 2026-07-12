@@ -98,7 +98,7 @@ export default function DepartmentTable({ departments, employees }: DepartmentTa
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "code",
-      header: "Code",
+      header: "Department",
       cell: ({ row }) => (
         <span className="font-mono font-bold text-xs bg-muted px-2 py-1 rounded border border-border">
           {row.getValue("code")}
