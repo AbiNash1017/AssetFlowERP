@@ -34,6 +34,16 @@ export async function registerAsset(formData: FormData) {
     return { error: parsed.error.issues[0].message };
   }
 
+  const documentsRaw = formData.get("documents") as string;
+  let documentsObj = null;
+  if (documentsRaw) {
+    try {
+      documentsObj = JSON.parse(documentsRaw);
+    } catch (e) {
+      return { error: "Invalid JSON for custom asset fields" };
+    }
+  }
+
   const assetTag = await generateAssetTag();
 
   const asset = await db.asset.create({
@@ -42,6 +52,7 @@ export async function registerAsset(formData: FormData) {
       assetTag,
       acquisitionDate: new Date(parsed.data.acquisitionDate),
       acquisitionCost: parsed.data.acquisitionCost,
+      documents: documentsObj,
     },
   });
 
@@ -77,11 +88,22 @@ export async function updateAsset(id: string, formData: FormData) {
     return { error: parsed.error.issues[0].message };
   }
 
+  const documentsRaw = formData.get("documents") as string;
+  let documentsObj = null;
+  if (documentsRaw) {
+    try {
+      documentsObj = JSON.parse(documentsRaw);
+    } catch (e) {
+      return { error: "Invalid JSON for custom asset fields" };
+    }
+  }
+
   await db.asset.update({
     where: { id },
     data: {
       ...parsed.data,
       acquisitionDate: new Date(parsed.data.acquisitionDate),
+      documents: documentsObj,
     },
   });
 
@@ -98,19 +120,23 @@ export async function updateAsset(id: string, formData: FormData) {
 }
 
 export async function updateAssetStatus(id: string, status: string) {
-  const session = await requireRole(["ASSET_MANAGER", "ADMIN"]);
+  try {
+    const session = await requireRole(["ASSET_MANAGER", "ADMIN"]);
 
-  await db.asset.update({ where: { id }, data: { status: status as any } });
+    await db.asset.update({ where: { id }, data: { status: status as any } });
 
-  await logActivity({
-    userId: session.user.id,
-    action: "UPDATE_ASSET_STATUS",
-    entityType: "Asset",
-    entityId: id,
-    metadata: { newStatus: status },
-  });
+    await logActivity({
+      userId: session.user.id,
+      action: "UPDATE_ASSET_STATUS",
+      entityType: "Asset",
+      entityId: id,
+      metadata: { newStatus: status },
+    });
 
-  revalidatePath("/assets");
-  revalidatePath(`/assets/${id}`);
-  return { success: true };
+    revalidatePath("/assets");
+    revalidatePath(`/assets/${id}`);
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to update asset status" };
+  }
 }

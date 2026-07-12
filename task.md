@@ -28,9 +28,9 @@
   - [x] `Notification`
   - [x] `ActivityLog`
 - [x] Create `.env.example` (template with placeholder values)
-- [ ] Configure `.env.local` with real Neon connection string + Better Auth secret
-- [ ] Run `npx prisma generate`
-- [ ] Run `npx prisma db push` (against Neon)
+- [x] Configure `.env.local` with real Neon connection string + Better Auth secret
+- [x] Run `npx prisma generate`
+- [x] Run `npx prisma db push` (against Neon)
 
 ### 1.3 Better Auth Setup
 - [x] Create `lib/auth.ts` — initialize Better Auth with Prisma adapter
@@ -79,10 +79,10 @@
 - [x] Root layout updated with Sonner `<Toaster />`
 
 #### Task 1 Verification
-- [ ] `prisma db push` succeeds against Neon (user must configure `.env.local` first)
-- [ ] Signup creates user with role `EMPLOYEE`
-- [ ] Login/logout works end-to-end with Better Auth session
-- [ ] RBAC guard blocks Employee accessing Admin-only route
+- [x] `prisma db push` succeeds against Neon (user must configure `.env.local` first)
+- [x] Signup creates user with role `EMPLOYEE`
+- [x] Login/logout works end-to-end with Better Auth session
+- [x] RBAC guard blocks Employee accessing Admin-only route
 - [x] `proxy.ts` replaces `middleware.ts` — function exported as `proxy` per Next.js 16 convention
 - [x] All Zod v4 `error.issues` (not `.errors`) throughout — tsc passes with zero errors
 - [x] `signOut()` called without args (Better Auth v1 react client doesn't accept `callbackURL`)
@@ -93,51 +93,51 @@
 ## Task 2 — Asset Management Core
 
 ### 2.1 Dashboard / Home Screen
-- [ ] `app/(dashboard)/page.tsx` — KPI cards (parallel data fetching)
-  - [ ] Assets Available, Allocated, Maintenance Today, Active Bookings
-  - [ ] Pending Transfers, Upcoming Returns
-  - [ ] Overdue returns section (highlighted)
-  - [ ] Quick action buttons (role-guarded)
-  - [ ] Recent activity feed
-- [ ] `app/api/dashboard/route.ts` — aggregated KPI data
+- [x] `app/(dashboard)/page.tsx` — KPI cards (parallel data fetching)
+  - [x] Assets Available, Allocated, Maintenance Today, Active Bookings
+  - [x] Pending Transfers, Upcoming Returns
+  - [x] Overdue returns section (highlighted)
+  - [x] Quick action buttons (role-guarded)
+  - [x] Recent activity feed
+- [x] `app/api/dashboard/route.ts` — aggregated KPI data
 
 ### 2.2 Organization Setup (Admin Only — 3 Tabs)
-- [ ] `app/(dashboard)/organization/page.tsx` — Admin-only route with 3 tabs
-- [ ] **Tab A — Department Management**
-  - [ ] `components/organization/DepartmentTable.tsx` (TanStack Table)
-  - [ ] Department form (parent dept dropdown, head assignment, status)
-  - [ ] Server Actions: `createDepartment`, `updateDepartment`, `deactivateDepartment`
-- [ ] **Tab B — Asset Category Management**
-  - [ ] `components/organization/CategoryTable.tsx`
-  - [ ] Category form with dynamic custom fields builder (JSON)
-  - [ ] Server Actions: `createCategory`, `updateCategory`
-- [ ] **Tab C — Employee Directory**
-  - [ ] `components/organization/EmployeeTable.tsx` (TanStack Table, searchable)
-  - [ ] Role promotion dropdown (Admin only: Employee → Dept Head / Asset Manager)
-  - [ ] Status toggle Active/Inactive
-  - [ ] Server Actions: `updateEmployeeRole`, `updateEmployeeStatus`
+- [x] `app/(dashboard)/organization/page.tsx` — Admin-only route with 3 tabs
+- [x] **Tab A — Department Management**
+  - [x] `components/organization/DepartmentTable.tsx` (TanStack Table)
+  - [x] Department form (parent dept dropdown, head assignment, status)
+  - [x] Server Actions: `createDepartment`, `updateDepartment`, `deactivateDepartment`
+- [x] **Tab B — Asset Category Management**
+  - [x] `components/organization/CategoryTable.tsx`
+  - [x] Category form with dynamic custom fields builder (JSON)
+  - [x] Server Actions: `createCategory`, `updateCategory`
+- [x] **Tab C — Employee Directory**
+  - [x] `components/organization/EmployeeTable.tsx` (TanStack Table, searchable)
+  - [x] Role promotion dropdown (Admin only: Employee → Dept Head / Asset Manager)
+  - [x] Status toggle Active/Inactive
+  - [x] Server Actions: `updateEmployeeRole`, `updateEmployeeStatus`
 
 ### 2.3 Asset Registration & Directory
-- [ ] `app/(dashboard)/assets/page.tsx` — TanStack Table with filters + search
-- [ ] `app/(dashboard)/assets/[id]/page.tsx` — asset detail, allocation & maintenance history
-- [ ] `components/assets/AssetForm.tsx` — Zod-validated registration form
-  - [ ] Auto-generated Asset Tag (AF-XXXX) displayed after save
-  - [ ] Photo upload, "Is Bookable" toggle
-- [ ] Server Actions: `registerAsset`, `updateAsset`, `updateAssetStatus`
+- [x] `app/(dashboard)/assets/page.tsx` — TanStack Table with filters + search
+- [x] `app/(dashboard)/assets/[id]/page.tsx` — asset detail, allocation & maintenance history
+- [x] `components/assets/AssetForm.tsx` — Zod-validated registration form
+  - [x] Auto-generated Asset Tag (AF-XXXX) displayed after save
+  - [x] Photo upload, "Is Bookable" toggle
+- [x] Server Actions: `registerAsset`, `updateAsset`, `updateAssetStatus`
 
 ### 2.4 Asset Allocation & Transfer
-- [ ] `app/(dashboard)/allocation/page.tsx` — All Allocations / My Allocations views
-- [ ] `components/allocation/AllocateModal.tsx` — conflict check + Transfer Request button
-- [ ] `components/allocation/TransferRequestModal.tsx` — transfer workflow
-- [ ] `components/allocation/ReturnModal.tsx` — condition check-in notes
-- [ ] Server Actions: `allocateAsset` (with DB transaction guard), `returnAsset`, `createTransferRequest`, `approveTransferRequest`, `rejectTransferRequest`
+- [x] `app/(dashboard)/allocation/page.tsx` — All Allocations / My Allocations views
+- [x] `components/allocation/AllocateModal.tsx` — conflict check + Transfer Request button
+- [x] `components/allocation/TransferRequestModal.tsx` — transfer workflow
+- [x] `components/allocation/ReturnModal.tsx` — condition check-in notes
+- [x] Server Actions: `allocateAsset` (with DB transaction guard), `returnAsset`, `createTransferRequest`, `approveTransferRequest`, `rejectTransferRequest`
 
 #### Task 2 Verification
-- [ ] Asset tag auto-generates as AF-0001, AF-0002, etc.
-- [ ] Double-allocation blocked with "held by [Name]" message
-- [ ] Transfer workflow moves through all states correctly
-- [ ] Return sets asset back to Available status
-- [ ] Employee Directory role promotion restricted to Admin
+- [x] Asset tag auto-generates as AF-0001, AF-0002, etc.
+- [x] Double-allocation blocked with "held by [Name]" message
+- [x] Transfer workflow moves through all states correctly
+- [x] Return sets asset back to Available status
+- [x] Employee Directory role promotion restricted to Admin
 
 ---
 

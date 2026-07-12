@@ -30,7 +30,13 @@ export async function createDepartment(formData: FormData) {
     return { error: parsed.error.issues[0].message };
   }
 
-  const dept = await db.department.create({ data: parsed.data });
+  const dept = await db.department.create({
+    data: {
+      ...parsed.data,
+      headId: parsed.data.headId || null,
+      parentDepartmentId: parsed.data.parentDepartmentId || null,
+    },
+  });
   await logActivity({
     userId: session.user.id,
     action: "CREATE_DEPARTMENT",
@@ -58,7 +64,14 @@ export async function updateDepartment(id: string, formData: FormData) {
     return { error: parsed.error.issues[0].message };
   }
 
-  await db.department.update({ where: { id }, data: parsed.data });
+  await db.department.update({
+    where: { id },
+    data: {
+      ...parsed.data,
+      headId: parsed.data.headId || null,
+      parentDepartmentId: parsed.data.parentDepartmentId || null,
+    },
+  });
   await logActivity({
     userId: session.user.id,
     action: "UPDATE_DEPARTMENT",
@@ -70,16 +83,20 @@ export async function updateDepartment(id: string, formData: FormData) {
 }
 
 export async function deactivateDepartment(id: string) {
-  const session = await requireRole(["ADMIN"]);
-  await db.department.update({ where: { id }, data: { status: "INACTIVE" } });
-  await logActivity({
-    userId: session.user.id,
-    action: "DEACTIVATE_DEPARTMENT",
-    entityType: "Department",
-    entityId: id,
-  });
-  revalidatePath("/organization");
-  return { success: true };
+  try {
+    const session = await requireRole(["ADMIN"]);
+    await db.department.update({ where: { id }, data: { status: "INACTIVE" } });
+    await logActivity({
+      userId: session.user.id,
+      action: "DEACTIVATE_DEPARTMENT",
+      entityType: "Department",
+      entityId: id,
+    });
+    revalidatePath("/organization");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to deactivate department" };
+  }
 }
 
 // ─── ASSET CATEGORY ──────────────────────────────────────────────────────────
@@ -87,9 +104,20 @@ export async function deactivateDepartment(id: string) {
 export async function createCategory(formData: FormData) {
   const session = await requireRole(["ADMIN"]);
 
+  let customFieldsObj = undefined;
+  const customFieldsRaw = formData.get("customFields") as string;
+  if (customFieldsRaw) {
+    try {
+      customFieldsObj = JSON.parse(customFieldsRaw);
+    } catch (e) {
+      return { error: "Invalid JSON for custom fields" };
+    }
+  }
+
   const raw = {
     name: formData.get("name") as string,
     description: (formData.get("description") as string) || undefined,
+    customFields: customFieldsObj,
   };
 
   const parsed = categorySchema.safeParse(raw);
@@ -111,9 +139,20 @@ export async function createCategory(formData: FormData) {
 export async function updateCategory(id: string, formData: FormData) {
   const session = await requireRole(["ADMIN"]);
 
+  let customFieldsObj = undefined;
+  const customFieldsRaw = formData.get("customFields") as string;
+  if (customFieldsRaw) {
+    try {
+      customFieldsObj = JSON.parse(customFieldsRaw);
+    } catch (e) {
+      return { error: "Invalid JSON for custom fields" };
+    }
+  }
+
   const raw = {
     name: formData.get("name") as string,
     description: (formData.get("description") as string) || undefined,
+    customFields: customFieldsObj,
   };
 
   const parsed = categorySchema.safeParse(raw);
