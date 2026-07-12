@@ -277,7 +277,7 @@ export default function AllocationClient({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Asset Allocations & Handovers</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Asset Allocations & Transfer</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {isManager 
               ? "Oversee, check-in, and manage custody changes for company assets." 

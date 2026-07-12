@@ -119,9 +119,11 @@ export default async function DashboardPage() {
 
   const kpis = [
     { name: "Assets Available", value: String(availableCount), change: "Ready for deployment", icon: Package, color: "text-primary bg-primary/10 border-primary/20" },
-    { name: "Assets Allocated", value: String(allocatedCount), change: `${upcomingReturnsCount} upcoming returns`, icon: FolderSync, color: "text-secondary bg-secondary/10 border-secondary/20" },
+    { name: "Assets Allocated", value: String(allocatedCount), change: "Held by employees/depts", icon: FolderSync, color: "text-secondary bg-secondary/10 border-secondary/20" },
     { name: "Active Bookings", value: String(activeBookingsCount), change: "Ongoing reservations", icon: CalendarDays, color: "text-teal-brand bg-teal-brand/10 border-teal-brand/20" },
     { name: "Maintenance Today", value: String(maintenanceTodayCount), change: "Currently in repair", icon: Wrench, color: "text-amber-600 bg-amber-500/10 border-amber-500/20" },
+    { name: "Pending Transfers", value: String(pendingTransfersCount), change: "Awaiting approval", icon: Repeat, color: "text-orange-500 bg-orange-500/10 border-orange-500/20" },
+    { name: "Upcoming Returns", value: String(upcomingReturnsCount), change: "Due for return soon", icon: Clock, color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20" },
   ];
 
   return (
@@ -147,7 +149,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
