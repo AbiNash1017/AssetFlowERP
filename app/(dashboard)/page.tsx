@@ -126,6 +126,18 @@ export default async function DashboardPage() {
     { name: "Upcoming Returns", value: String(upcomingReturnsCount), change: "Due for return soon", icon: Clock, color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20" },
   ];
 
+  const hour = now.getHours();
+  let greeting = "Welcome back";
+  if (hour >= 5 && hour < 12) {
+    greeting = "Good morning";
+  } else if (hour >= 12 && hour < 17) {
+    greeting = "Good afternoon";
+  } else if (hour >= 17 && hour < 22) {
+    greeting = "Good evening";
+  } else {
+    greeting = "Good night";
+  }
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Banner */}
@@ -135,7 +147,7 @@ export default async function DashboardPage() {
         
         <div className="relative z-10 flex flex-col justify-between sm:flex-row sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-extrabold sm:text-3xl">Welcome back, {session.user.name || "User"}!</h1>
+            <h1 className="text-2xl font-extrabold sm:text-3xl">{greeting}, {session.user.name || "User"}!</h1>
             <p className="mt-1 text-sm text-white/80">
               Here is your AssetFlow ERP dashboard snapshot. Role: <span className="font-bold underline">{userRole.replace("_", " ")}</span>
             </p>

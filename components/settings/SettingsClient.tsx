@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, Input, Select, Button } from "@/components/ui";
+import { updateUserProfile } from "@/app/actions/user-profile";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { RefreshCw, User, Lock, Save, ArrowLeft } from "lucide-react";
@@ -42,30 +43,27 @@ export default function SettingsClient({ currentUser }: SettingsClientProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
-  // Initialize seed if no current image
+  // Initialize seed from existing image URL or generate a fresh one
   useEffect(() => {
-    if (!currentUser.image) {
-      const initialSeed = Math.random().toString(36).substring(7);
-      setAvatarSeed(initialSeed);
-      setAvatarUrl(`https://api.dicebear.com/9.x/lorelei/svg?seed=${initialSeed}`);
-    } else {
-      // Parse current style/seed from DiceBear URL if possible
+    if (currentUser.image && currentUser.image.includes("dicebear.com")) {
       try {
         const url = new URL(currentUser.image);
-        if (url.hostname.includes("dicebear.com")) {
-          const pathSegments = url.pathname.split("/");
-          const style = pathSegments[pathSegments.length - 2];
-          const seed = url.searchParams.get("seed");
-          if (style && seed) {
-            setAvatarStyle(style);
-            setAvatarSeed(seed);
-          }
+        const pathSegments = url.pathname.split("/");
+        const style = pathSegments[pathSegments.length - 2];
+        const seed = url.searchParams.get("seed");
+        if (style && seed) {
+          setAvatarStyle(style);
+          setAvatarSeed(seed);
         }
-      } catch (e) {
-        // Fallback if not a valid URL or not DiceBear
-      }
+      } catch (e) { /* ignore */ }
+    } else {
+      // No image yet — generate a default one and auto-apply it
+      const initialSeed = Math.random().toString(36).substring(7);
+      setAvatarSeed(initialSeed);
+      const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${initialSeed}`;
+      setAvatarUrl(url);
     }
-  }, [currentUser.image]);
+  }, []);
 
   // Update avatar URL when style or seed changes
   const handleStyleChange = (style: string) => {
@@ -81,7 +79,7 @@ export default function SettingsClient({ currentUser }: SettingsClientProps) {
     setAvatarUrl(`https://api.dicebear.com/9.x/${avatarStyle}/svg?seed=${seed}`);
   };
 
-  // Handle Profile Update
+  // Handle Profile Update — uses server action to write directly to DB
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
@@ -91,15 +89,11 @@ export default function SettingsClient({ currentUser }: SettingsClientProps) {
 
     setIsSavingProfile(true);
     try {
-      const res = await authClient.updateUser({
-        name,
-        image: avatarUrl,
-      });
-
+      const res = await updateUserProfile(name, avatarUrl || null);
       if (res?.error) {
-        toast.error(res.error.message || "Failed to update profile.");
+        toast.error(res.error);
       } else {
-        toast.success("Profile settings updated successfully!");
+        toast.success("Profile updated! Avatar is now visible across the app.");
         router.refresh();
       }
     } catch (err: any) {
@@ -130,7 +124,7 @@ export default function SettingsClient({ currentUser }: SettingsClientProps) {
       });
 
       if (res?.error) {
-        toast.error(res.error.message || "Failed to change password. Make sure current password is correct.");
+        toast.error(res.error.message || "Failed to change password. Make sure your current password is correct.");
       } else {
         toast.success("Password changed successfully.");
         setCurrentPassword("");

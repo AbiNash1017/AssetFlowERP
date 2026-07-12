@@ -16,8 +16,8 @@ const DEMO_ROLES = [
     password: "Demo@Admin123",
     description: "Full system access",
     icon: Shield,
-    color: "text-purple-600 dark:text-purple-400",
-    bg: "bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800",
+    color: "text-purple-500 dark:text-purple-400",
+    borderColor: "hover:border-purple-500/30 hover:bg-purple-500/[0.02] dark:hover:bg-purple-500/[0.04]",
   },
   {
     label: "Asset Manager",
@@ -25,8 +25,8 @@ const DEMO_ROLES = [
     password: "Demo@Manager123",
     description: "Manage assets & allocations",
     icon: Briefcase,
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800",
+    color: "text-blue-500 dark:text-blue-400",
+    borderColor: "hover:border-blue-500/30 hover:bg-blue-500/[0.02] dark:hover:bg-blue-500/[0.04]",
   },
   {
     label: "Dept Head",
@@ -34,8 +34,8 @@ const DEMO_ROLES = [
     password: "Demo@Head123",
     description: "Department oversight",
     icon: Users,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800",
+    color: "text-emerald-500 dark:text-emerald-400",
+    borderColor: "hover:border-emerald-500/30 hover:bg-emerald-500/[0.02] dark:hover:bg-emerald-500/[0.04]",
   },
   {
     label: "Employee",
@@ -43,8 +43,8 @@ const DEMO_ROLES = [
     password: "Demo@Employee123",
     description: "Request & track assets",
     icon: User,
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800",
+    color: "text-amber-500 dark:text-amber-400",
+    borderColor: "hover:border-amber-500/30 hover:bg-amber-500/[0.02] dark:hover:bg-amber-500/[0.04]",
   },
 ];
 
@@ -59,6 +59,7 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showDemoPanel, setShowDemoPanel] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,49 +188,77 @@ function LoginContent() {
           </div>
 
           {/* ── Demo Accounts Panel ── */}
-          <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Try a Demo Account</span>
-              <span className="text-[10px] bg-primary/10 text-primary font-semibold rounded-full px-2 py-0.5">
-                No signup needed
-              </span>
+          {showDemoPanel ? (
+            <div className="rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-muted/30 p-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-foreground uppercase tracking-wider">Try a Demo Account</span>
+                  <span className="text-[10px] bg-primary/10 text-primary font-semibold rounded-full px-2 py-0.5">
+                    No signup needed
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDemoPanel(false)}
+                  className="text-2xs text-muted-foreground hover:text-foreground hover:underline cursor-pointer font-medium"
+                >
+                  Hide
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Click any role to instantly access a pre-configured demo account.
+              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {DEMO_ROLES.map((role) => {
+                  const Icon = role.icon;
+                  const loading = demoLoading === role.label;
+                  return (
+                    <button
+                      key={role.label}
+                      type="button"
+                      onClick={() => handleDemoLogin(role)}
+                      disabled={!!demoLoading}
+                      className={`flex items-center gap-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-card p-2.5 text-left transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] ${role.borderColor}`}
+                    >
+                      <div className={`p-1.5 rounded-md bg-muted/45 ${role.color} flex-shrink-0`}>
+                        {loading ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Icon className="h-3.5 w-3.5" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-foreground">{role.label}</div>
+                        <div className="text-[10px] text-muted-foreground leading-tight">{role.description}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Click any role to instantly access a pre-configured demo account.
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {DEMO_ROLES.map((role) => {
-                const Icon = role.icon;
-                const loading = demoLoading === role.label;
-                return (
-                  <button
-                    key={role.label}
-                    type="button"
-                    onClick={() => handleDemoLogin(role)}
-                    disabled={!!demoLoading}
-                    className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-left transition-all duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:shadow-sm active:scale-[0.98] ${role.bg}`}
-                  >
-                    {loading ? (
-                      <Loader2 className={`h-4 w-4 mt-0.5 animate-spin flex-shrink-0 ${role.color}`} />
-                    ) : (
-                      <Icon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${role.color}`} />
-                    )}
-                    <div className="min-w-0">
-                      <div className={`text-xs font-bold truncate ${role.color}`}>{role.label}</div>
-                      <div className="text-[10px] text-muted-foreground leading-tight">{role.description}</div>
-                    </div>
-                  </button>
-                );
-              })}
+          ) : (
+            <div className="text-center pt-1">
+              <button
+                type="button"
+                onClick={() => setShowDemoPanel(true)}
+                className="text-xs font-semibold text-primary hover:underline cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-muted/20 hover:bg-muted/40 transition-colors"
+              >
+                <span>Try a Demo Account</span>
+                <span className="text-[9px] bg-primary/10 text-primary font-bold rounded-full px-1.5 py-0.5">
+                  No signup needed
+                </span>
+              </button>
             </div>
-          </div>
+          )}
 
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground font-medium">or sign in with your account</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
+          {/* Divider (Only shown when demo panel is expanded) */}
+          {showDemoPanel && (
+            <div className="flex items-center gap-3 animate-in fade-in duration-200">
+              <div className="flex-1 h-px bg-neutral-300 dark:bg-neutral-700" />
+              <span className="text-xs text-muted-foreground font-medium">or sign in with your account</span>
+              <div className="flex-1 h-px bg-neutral-300 dark:bg-neutral-700" />
+            </div>
+          )}
 
           {/* ── Sign In Form ── */}
           <form onSubmit={handleSubmit} className="space-y-4">
