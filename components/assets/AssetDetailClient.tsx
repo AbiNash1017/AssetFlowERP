@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from "react";
 import Link from "next/link";
-import { Button, Badge, Modal, ModalFooter, Input, Select } from "@/components/ui";
+import { Button, Badge, Modal, ModalFooter, Input, Select, QRDisplay } from "@/components/ui";
 import { toast } from "sonner";
 import { updateAssetStatus } from "@/app/actions/assets";
 import { allocateAsset, returnAsset, createTransferRequest } from "@/app/actions/allocation";
@@ -481,6 +481,14 @@ export default function AssetDetailClient({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Asset QR Tag Display Card */}
+          <div className="bg-card border border-border rounded-xl p-6 shadow-3xs flex flex-col items-center">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground pb-3 border-b border-border w-full text-left mb-4">
+              Asset QR Code
+            </h3>
+            <QRDisplay value={asset.assetTag} />
           </div>
         </div>
       </div>

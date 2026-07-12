@@ -20,3 +20,10 @@ export { Avatar } from "./Avatar";
 export { Tabs } from "./Tabs";
 
 export { DataTable } from "./DataTable";
+
+export { ConfirmDialog } from "./ConfirmDialog";
+
+export { EmptyState } from "./EmptyState";
+
+export { QRDisplay } from "./QRDisplay";
+

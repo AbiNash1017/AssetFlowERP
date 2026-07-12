@@ -191,38 +191,38 @@
 ## Task 4 — Reports, Analytics & Polish
 
 ### 4.1 Reports & Analytics Screen
-- [ ] `app/(dashboard)/reports/page.tsx` — tab layout
-  - [ ] Asset Utilization tab (most-used vs. idle, charts)
-  - [ ] Maintenance Frequency tab
-  - [ ] Lifecycle tab (due for maintenance / nearing retirement)
-  - [ ] Department Summary tab
-  - [ ] Booking Heatmap tab (hour × day grid)
-  - [ ] Export tab (CSV per report)
-- [ ] API routes: `utilization`, `maintenance`, `department`, `booking-heatmap`
-- [ ] Install `recharts`: `bun add recharts`
+- [x] `app/(dashboard)/reports/page.tsx` — tab layout
+  - [x] Asset Utilization tab (most-used vs. idle, charts)
+  - [x] Maintenance Frequency tab
+  - [x] Lifecycle tab (due for maintenance / nearing retirement)
+  - [x] Department Summary tab
+  - [x] Booking Heatmap tab (hour × day grid)
+  - [x] Export tab (CSV per report)
+- [x] API routes: `utilization`, `maintenance`, `department`, `booking-heatmap`
+- [x] Install `recharts`: `bun add recharts`
 
 ### 4.2 Overdue Detection
-- [ ] `app/api/cron/overdue-check/route.ts`
-  - [ ] Flag allocations where `expectedReturnDate < now AND status = ACTIVE` → set OVERDUE
-  - [ ] Create notifications for holders + Asset Managers
+- [x] `app/api/cron/overdue-check/route.ts`
+  - [x] Flag allocations where `expectedReturnDate < now AND status = ACTIVE` → set OVERDUE
+  - [x] Create notifications for holders + Asset Managers
 
 ### 4.3 Global Polish & QA
-- [ ] Sonner toast patterns on all Server Actions (success + error)
-- [ ] Loading skeletons on all tables and KPI cards
-- [ ] Empty states for all tables
-- [ ] Mobile-responsive layouts (Tailwind breakpoints)
-- [ ] Accessibility: ARIA labels, keyboard navigation on modals
-- [ ] Error boundaries on all pages
-- [ ] QR code per asset (`bun add qrcode.react`)
-- [ ] Confirm dialogs for destructive actions
-- [ ] `components/ui/ConfirmDialog.tsx`
-- [ ] `components/ui/EmptyState.tsx`
-- [ ] `components/ui/LoadingSkeleton.tsx`
-- [ ] `components/ui/QRDisplay.tsx`
+- [x] Sonner toast patterns on all Server Actions (success + error)
+- [x] Loading skeletons on all tables and KPI cards
+- [x] Empty states for all tables
+- [x] Mobile-responsive layouts (Tailwind breakpoints)
+- [x] Accessibility: ARIA labels, keyboard navigation on modals
+- [x] Error boundaries on all pages
+- [x] QR code per asset (`bun add qrcode.react`)
+- [x] Confirm dialogs for destructive actions
+- [x] `components/ui/ConfirmDialog.tsx`
+- [x] `components/ui/EmptyState.tsx`
+- [x] `components/ui/LoadingSkeleton.tsx`
+- [x] `components/ui/QRDisplay.tsx`
 
 #### Task 4 Verification
-- [ ] All report tabs show real data
-- [ ] CSV export downloads correctly
-- [ ] Overdue cron endpoint correctly flags and notifies
-- [ ] All Sonner toasts appear on success/error
-- [ ] Responsive layout works on mobile breakpoints
+- [x] All report tabs show real data
+- [x] CSV export downloads correctly
+- [x] Overdue cron endpoint correctly flags and notifies
+- [x] All Sonner toasts appear on success/error
+- [x] Responsive layout works on mobile breakpoints
