@@ -1,13 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
 import { signupSchema } from "@/lib/validations/auth";
 import { THEME } from "@/lib/constants/styles";
 import { toast } from "sonner";
-import { KeyRound, Mail, User, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2 } from "lucide-react";
+import { KeyRound, Mail, User, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2, RefreshCw } from "lucide-react";
+
+const AVATAR_STYLES = [
+  { id: "lorelei", label: "Illustrated" },
+  { id: "adventurer", label: "Adventure" },
+  { id: "bottts", label: "Robots" },
+  { id: "fun-emoji", label: "Emoji" },
+];
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,6 +25,27 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+
+  // DiceBear Avatar States
+  const [avatarStyle, setAvatarStyle] = useState("lorelei");
+  const [avatarSeed, setAvatarSeed] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+
+  // Initialize random seed on mount
+  useEffect(() => {
+    setAvatarSeed(Math.random().toString(36).substring(7));
+  }, []);
+
+  // Update avatar URL when style or seed changes
+  useEffect(() => {
+    if (avatarSeed) {
+      setAvatarUrl(`https://api.dicebear.com/9.x/${avatarStyle}/svg?seed=${avatarSeed}`);
+    }
+  }, [avatarStyle, avatarSeed]);
+
+  const handleRandomizeAvatar = () => {
+    setAvatarSeed(Math.random().toString(36).substring(7));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +71,7 @@ export default function SignupPage() {
         name,
         email,
         password,
+        image: avatarUrl,
         callbackURL: "/login",
       });
 
@@ -116,10 +145,57 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <div className="mt-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="mt-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Profile Avatar Selection Section */}
+              <div className="rounded-xl border border-border p-4 bg-muted/30 space-y-3">
+                <span className="block text-sm font-semibold text-foreground">Choose Profile Avatar</span>
+                
+                <div className="flex items-center gap-4">
+                  {/* Avatar Preview */}
+                  <div className="relative h-16 w-16 shrink-0 rounded-full border border-border bg-card overflow-hidden flex items-center justify-center">
+                    {avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={avatarUrl} alt="Avatar Preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                    )}
+                  </div>
+
+                  <div className="flex-1 space-y-2">
+                    {/* Style selector */}
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {AVATAR_STYLES.map((style) => (
+                        <button
+                          key={style.id}
+                          type="button"
+                          onClick={() => setAvatarStyle(style.id)}
+                          className={`text-xs py-1 px-2 rounded-md border text-center font-medium transition-all ${
+                            avatarStyle === style.id
+                              ? "bg-primary border-primary text-primary-foreground shadow-sm"
+                              : "bg-card border-border text-foreground hover:bg-accent"
+                          }`}
+                        >
+                          {style.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Randomize button */}
+                    <button
+                      type="button"
+                      onClick={handleRandomizeAvatar}
+                      className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      <span>Randomize Seed</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label htmlFor="name" className={THEME.classes.label}>
+                <label htmlFor="name" className="block text-sm font-semibold text-foreground">
                   Full Name
                 </label>
                 <div className="relative mt-1">
@@ -139,14 +215,14 @@ export default function SignupPage() {
                   />
                 </div>
                 {errors.name && (
-                  <p className="mt-1.5 text-xs text-destructive font-medium">
+                  <p className="mt-1 text-xs text-destructive font-medium">
                     <span>{errors.name}</span>
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="email" className={THEME.classes.label}>
+                <label htmlFor="email" className="block text-sm font-semibold text-foreground">
                   Email Address
                 </label>
                 <div className="relative mt-1">
@@ -166,14 +242,14 @@ export default function SignupPage() {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1.5 text-xs text-destructive font-medium">
+                  <p className="mt-1 text-xs text-destructive font-medium">
                     <span>{errors.email}</span>
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="password" className={THEME.classes.label}>
+                <label htmlFor="password" className="block text-sm font-semibold text-foreground">
                   Password
                 </label>
                 <div className="relative mt-1">
@@ -201,7 +277,7 @@ export default function SignupPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1.5 text-xs text-destructive font-medium">
+                  <p className="mt-1 text-xs text-destructive font-medium">
                     <span>{errors.password}</span>
                   </p>
                 )}
@@ -211,7 +287,7 @@ export default function SignupPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`${THEME.classes.btnPrimary} w-full flex items-center justify-center gap-2 py-2.5`}
+                  className={`${THEME.classes.btnPrimary} w-full flex items-center justify-center gap-2 py-2.5 mt-2`}
                 >
                   {isLoading ? (
                     <>

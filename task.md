@@ -87,6 +87,9 @@
 - [x] All Zod v4 `error.issues` (not `.errors`) throughout — tsc passes with zero errors
 - [x] `signOut()` called without args (Better Auth v1 react client doesn't accept `callbackURL`)
 - [x] `authClient.requestPasswordReset()` replaces `forgetPassword()`
+- [x] Login page elements and structure aligned with mockup wireframe
+- [x] Signup page supports interactive DiceBear avatar switching and randomization
+- [x] Types check and compile with zero errors (tsc verified)
 
 ---
 

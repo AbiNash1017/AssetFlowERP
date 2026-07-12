@@ -39,52 +39,52 @@ export default function Sidebar({ user }: SidebarProps) {
   const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard, show: true },
     { 
-      name: "Organization Setup", 
+      name: "Organization setup", 
       href: "/organization", 
       icon: Settings, 
-      show: userRole === "ADMIN" 
+      show: true 
     },
     { 
-      name: "Asset Directory", 
+      name: "Assets", 
       href: "/assets", 
       icon: Package, 
-      show: ["ADMIN", "ASSET_MANAGER"].includes(userRole) 
+      show: true 
     },
     { 
-      name: "Asset Allocations", 
+      name: "Allocation & Transfer", 
       href: "/allocation", 
       icon: FolderSync, 
-      show: ["ADMIN", "ASSET_MANAGER"].includes(userRole) 
+      show: true 
     },
     { 
-      name: "Resource Bookings", 
+      name: "Resource Booking", 
       href: "/bookings", 
       icon: CalendarDays, 
       show: true 
     },
     { 
-      name: "Maintenance Requests", 
+      name: "Maintenance", 
       href: "/maintenance", 
       icon: Wrench, 
       show: true 
     },
     { 
-      name: "Asset Audits", 
+      name: "Audit", 
       href: "/audit", 
       icon: ClipboardCheck, 
-      show: ["ADMIN", "ASSET_MANAGER"].includes(userRole) 
+      show: true 
     },
     { 
-      name: "Reports & Analytics", 
+      name: "Reports", 
       href: "/reports", 
       icon: BarChart3, 
-      show: ["ADMIN", "ASSET_MANAGER", "DEPARTMENT_HEAD"].includes(userRole) 
+      show: true 
     },
     { 
-      name: "Activity Logs", 
+      name: "Notifications", 
       href: "/notifications", 
       icon: History, 
-      show: userRole === "ADMIN" 
+      show: true 
     },
   ];
 

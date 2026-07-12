@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
@@ -9,7 +9,7 @@ import { THEME } from "@/lib/constants/styles";
 import { toast } from "sonner";
 import { KeyRound, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -114,21 +114,21 @@ export default function LoginPage() {
       {/* Right panel: Login Form */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:w-1/2 xl:w-5/12 lg:px-20 xl:px-24 bg-card">
         <div className="mx-auto w-full max-w-sm">
-          <div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Sign In</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              New to AssetFlow?{" "}
-              <Link href="/signup" className="font-semibold text-primary hover:text-primary/80 underline decoration-2 underline-offset-4">
-                Create an employee account
-              </Link>
-            </p>
+          {/* Header matching the image */}
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-extrabold tracking-tight text-foreground">AssetFlow – login</h2>
+            <div className="mt-4 flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-border bg-muted text-lg font-bold text-muted-foreground shadow-sm">
+                AF
+              </div>
+            </div>
           </div>
 
-          <div className="mt-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className={THEME.classes.label}>
-                  Email Address
+                <label htmlFor="email" className="block text-sm font-semibold text-foreground">
+                  Email
                 </label>
                 <div className="relative mt-1">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
@@ -143,29 +143,21 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={`${THEME.classes.input} pl-10 ${errors.email ? "border-destructive ring-1 ring-destructive" : ""}`}
-                    placeholder="you@company.com"
+                    placeholder="name@company.com"
                     disabled={isLoading}
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1.5 text-xs text-destructive font-medium flex items-center gap-1">
+                  <p className="mt-1 text-xs text-destructive font-medium">
                     <span>{errors.email}</span>
                   </p>
                 )}
               </div>
 
               <div>
-                <div className="flex items-center justify-between">
-                  <label htmlFor="password" className={THEME.classes.label}>
-                    Password
-                  </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-semibold text-primary hover:text-primary/80"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
+                <label htmlFor="password" className="block text-sm font-semibold text-foreground">
+                  Password
+                </label>
                 <div className="relative mt-1">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
                     <KeyRound className="h-4 w-4" />
@@ -179,7 +171,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`${THEME.classes.input} pl-10 pr-10 ${errors.password ? "border-destructive ring-1 ring-destructive" : ""}`}
-                    placeholder="••••••••"
+                    placeholder="*********"
                     disabled={isLoading}
                   />
                   <button
@@ -192,17 +184,26 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1.5 text-xs text-destructive font-medium flex items-center gap-1">
+                  <p className="mt-1 text-xs text-destructive font-medium">
                     <span>{errors.password}</span>
                   </p>
                 )}
+                
+                <div className="flex justify-end mt-1.5">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs font-semibold text-primary hover:text-primary/80"
+                  >
+                    Forgot password
+                  </Link>
+                </div>
               </div>
 
               <div>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`${THEME.classes.btnPrimary} w-full flex items-center justify-center gap-2 py-2.5`}
+                  className={`${THEME.classes.btnPrimary} w-full flex items-center justify-center gap-2 py-2.5 mt-2`}
                 >
                   {isLoading ? (
                     <>
@@ -219,15 +220,39 @@ export default function LoginPage() {
               </div>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-border">
-              <div className="rounded-lg bg-muted p-4 text-xs text-muted-foreground border border-border/50">
-                <span className="font-semibold text-foreground block mb-1">💡 Demo Accounts Notice</span>
-                The organization administrator promotes users and assigns role-based permissions (Department Head, Asset Manager, Admin) inside the employee directory.
+            <hr className="my-6 border-border" />
+
+            <div className="space-y-4">
+              <div>
+                <span className="block text-sm font-semibold text-foreground">New here?</span>
+              </div>
+              <div className="rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+                Sign up creates an employee account admin roles assigned later
+              </div>
+              <div>
+                <Link
+                  href="/signup"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-border bg-card text-foreground font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-150"
+                >
+                  Create Account
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
