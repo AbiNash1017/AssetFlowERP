@@ -211,7 +211,7 @@ export default function ReportsClient({ currentUser }: ReportsClientProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-md">
               <CardHeader>
-                <CardTitle className="text-base font-bold text-foreground">Most Allocated Assets</CardTitle>
+                <CardTitle className="text-base font-bold text-foreground">Most Frequently Used Assets</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {utilizationData.mostActive.length === 0 ? (
