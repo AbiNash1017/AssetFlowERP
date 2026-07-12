@@ -66,7 +66,7 @@ export default function AssetForm({
     } else {
       // Set defaults for creation
       setName("");
-      setCategoryId(categories[0]?.id || "");
+      setCategoryId("");
       setSerialNumber("");
       setAcquisitionDate(new Date().toISOString().split("T")[0]);
       setAcquisitionCost("");
@@ -169,6 +169,7 @@ export default function AssetForm({
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
           options={categories.map((c) => ({ value: c.id, label: c.name }))}
+          placeholder="Select category..."
           required
         />
       </div>

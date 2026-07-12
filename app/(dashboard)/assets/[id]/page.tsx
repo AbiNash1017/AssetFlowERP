@@ -62,9 +62,14 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
     departmentId: session.user.departmentId || null,
   };
 
+  const serializedAsset = {
+    ...asset,
+    acquisitionCost: Number(asset.acquisitionCost),
+  };
+
   return (
     <AssetDetailClient
-      asset={asset}
+      asset={serializedAsset}
       users={users}
       departments={departments}
       currentUser={currentUser}

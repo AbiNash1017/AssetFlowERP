@@ -13,6 +13,7 @@ import { Role, AssetStatus } from "@prisma/client";
 interface AssetsClientProps {
   assets: any[];
   categories: any[];
+  departments: any[];
   userRole: Role;
 }
 
@@ -29,6 +30,7 @@ const statusMap: Record<AssetStatus, { label: string; color: string }> = {
 export default function AssetsClient({
   assets,
   categories,
+  departments,
   userRole,
 }: AssetsClientProps) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,6 +40,7 @@ export default function AssetsClient({
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("ALL");
 
   const openAddModal = () => {
     setEditingAsset(null);
@@ -52,16 +55,24 @@ export default function AssetsClient({
   // Filter logic
   const filteredAssets = assets.filter((asset) => {
     const term = searchText.toLowerCase();
+    const activeAllocation = asset.allocations?.[0];
     const matchesSearch =
       asset.name.toLowerCase().includes(term) ||
       asset.assetTag.toLowerCase().includes(term) ||
       asset.serialNumber.toLowerCase().includes(term) ||
-      asset.location.toLowerCase().includes(term);
+      asset.location.toLowerCase().includes(term) ||
+      (activeAllocation?.department?.name || "").toLowerCase().includes(term) ||
+      (activeAllocation?.user?.name || "").toLowerCase().includes(term) ||
+      (activeAllocation?.user?.department?.name || "").toLowerCase().includes(term);
 
     const matchesStatus = selectedStatus === "ALL" || asset.status === selectedStatus;
     const matchesCategory = selectedCategory === "ALL" || asset.categoryId === selectedCategory;
+    const matchesDepartment =
+      selectedDepartment === "ALL" ||
+      activeAllocation?.departmentId === selectedDepartment ||
+      activeAllocation?.user?.departmentId === selectedDepartment;
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    return matchesSearch && matchesStatus && matchesCategory && matchesDepartment;
   });
 
   const columns: ColumnDef<any>[] = [
@@ -191,7 +202,7 @@ export default function AssetsClient({
       </div>
 
       {/* Advanced Filters */}
-      <div className="grid gap-4 sm:grid-cols-3 bg-muted/30 p-4 rounded-xl border border-border/80">
+      <div className="grid gap-4 sm:grid-cols-4 bg-muted/30 p-4 rounded-xl border border-border/80">
         <div>
           <label className="block text-3xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Filter by Status</label>
           <select
@@ -226,12 +237,28 @@ export default function AssetsClient({
         </div>
 
         <div>
+          <label className="block text-3xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Filter by Department</label>
+          <select
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            className="w-full h-9 bg-card border border-input rounded-lg px-3 py-1 text-sm text-foreground focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer"
+          >
+            <option value="ALL">All Departments</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
           <label className="block text-3xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Quick Search</label>
           <input
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search by tag, name, serial, location..."
+            placeholder="Search by tag, name, serial, location, department..."
             className="w-full h-9 bg-card border border-input rounded-lg px-3 py-1 text-sm text-foreground focus:ring-1 focus:ring-primary focus:outline-none"
           />
         </div>
