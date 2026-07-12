@@ -1,26 +1,172 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Color Palette inspired by the user's provided images (Odoo style) */
+  --primary-raw: 316 21% 35%; /* #714B67 */
+  --primary: hsl(var(--primary-raw));
+  --primary-foreground: hsl(0 0% 100%);
+  
+  --secondary-raw: 14 78% 64%; /* #E97D5B (Warm Orange/Peach) */
+  --secondary: hsl(var(--secondary-raw));
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --teal-raw: 187 100% 33%; /* #0097A7 (Teal Highlight) */
+  --teal: hsl(var(--teal-raw));
+  --teal-foreground: hsl(0 0% 100%);
+
+  --background: #fbfafb;
+  --foreground: #2d262b;
+
+  --card: #ffffff;
+  --card-foreground: #2d262b;
+
+  --popover: #ffffff;
+  --popover-foreground: #2d262b;
+
+  --muted: #f4f1f3;
+  --muted-foreground: #6e646a;
+
+  --accent: #f4f1f3;
+  --accent-foreground: #714B67;
+
+  --destructive: #dc3545;
+  --destructive-foreground: #ffffff;
+
+  --border: #e6e0e4;
+  --input: #e6e0e4;
+  --ring: #714B67;
+
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171215;
+    --foreground: #f4f1f3;
+
+    --card: #201a1d;
+    --card-foreground: #f4f1f3;
+
+    --popover: #201a1d;
+    --popover-foreground: #f4f1f3;
+
+    --muted: #2d262a;
+    --muted-foreground: #a69ea3;
+
+    --accent: #2d262a;
+    --accent-foreground: #f0e6ed;
+
+    --border: #3d3439;
+    --input: #3d3439;
+    --ring: #8f6182;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-teal-brand: var(--teal);
+  --color-teal-brand-foreground: var(--teal-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom premium elements & micro-animations */
+.premium-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(113, 75, 103, 0.06), 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.btn-primary:hover {
+  background-color: hsl(316 21% 28%);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.btn-secondary:hover {
+  background-color: hsl(14 78% 57%);
+}
+
+.btn-outline {
+  border: 1px solid var(--border);
+  background-color: transparent;
+  color: var(--foreground);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-outline:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Custom linear timeline step active highlight */
+.timeline-dot-active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(113, 75, 103, 0.2);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(32, 26, 29, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
