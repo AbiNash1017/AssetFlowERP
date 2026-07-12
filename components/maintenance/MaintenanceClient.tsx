@@ -150,6 +150,23 @@ export default function MaintenanceClient({
       ),
     },
     {
+      accessorKey: "createdAt",
+      header: "Pending",
+      cell: ({ row }) => <span>{new Date(row.getValue("createdAt")).toLocaleDateString()}</span>,
+    },
+    {
+      accessorKey: "approvedBy",
+      header: "Approved",
+      cell: ({ row }) => {
+        const approver = row.original.approvedBy;
+        return approver ? (
+          <span className="text-sm font-medium">{approver.name}</span>
+        ) : (
+          <span className="text-xs text-muted-foreground italic">Pending Approval</span>
+        );
+      },
+    },
+    {
       accessorKey: "priority",
       header: "Priority",
       cell: ({ row }) => {
@@ -186,7 +203,7 @@ export default function MaintenanceClient({
     },
     {
       accessorKey: "technicianId",
-      header: "Assigned Tech",
+      header: "Technician assigned",
       cell: ({ row }) => {
         const techId = row.getValue("technicianId") as string;
         const tech = techId ? usersMap.get(techId) : null;
