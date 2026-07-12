@@ -7,12 +7,14 @@ import { registerAsset, updateAsset } from "@/app/actions/assets";
 
 interface AssetFormProps {
   categories: any[];
+  departments?: any[];
   initialAsset?: any;
   onSubmitSuccess?: (id?: string) => void;
 }
 
 export default function AssetForm({
   categories,
+  departments = [],
   initialAsset,
   onSubmitSuccess,
 }: AssetFormProps) {
@@ -28,6 +30,7 @@ export default function AssetForm({
   const [location, setLocation] = useState("");
   const [isBookable, setIsBookable] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
 
   // Custom fields state
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, any>>({});
@@ -74,6 +77,7 @@ export default function AssetForm({
       setLocation("");
       setIsBookable(false);
       setPhotoUrl("");
+      setDepartmentId("");
       setCustomFieldValues({});
     }
   }, [initialAsset, categories]);
@@ -125,6 +129,9 @@ export default function AssetForm({
     formData.append("isBookable", isBookable ? "true" : "false");
     formData.append("photoUrl", photoUrl);
     formData.append("documents", JSON.stringify(customFieldValues));
+    if (!initialAsset) {
+      formData.append("departmentId", departmentId);
+    }
 
     startTransition(async () => {
       let res;
@@ -227,6 +234,16 @@ export default function AssetForm({
           placeholder="e.g. https://images.unsplash.com/photo-..."
         />
       </div>
+
+      {!initialAsset && (
+        <Select
+          label="Initial Department Assignment (Optional)"
+          value={departmentId}
+          onChange={(e) => setDepartmentId(e.target.value)}
+          options={[{ value: "", label: "Keep in Inventory / Available" }, ...departments.map((d) => ({ value: d.id, label: d.name }))]}
+          hint="Directly allocate this asset to a department upon registration"
+        />
+      )}
 
       <div className="flex items-center gap-2 p-3 bg-muted/40 rounded-lg border border-border/80">
         <input

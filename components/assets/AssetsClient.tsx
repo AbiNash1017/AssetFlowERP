@@ -279,6 +279,7 @@ export default function AssetsClient({
       >
         <AssetForm
           categories={categories}
+          departments={departments}
           initialAsset={editingAsset}
           onSubmitSuccess={() => {
             setModalOpen(false);
