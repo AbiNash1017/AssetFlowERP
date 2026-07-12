@@ -200,7 +200,7 @@ export default function BookingsClient({ initialBookings, bookableAssets, curren
         </div>
         <Link href="/bookings/new">
           <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" /> Book a Resource
+            <Plus className="h-4 w-4" /> Book a Slot
           </Button>
         </Link>
       </div>
@@ -244,6 +244,91 @@ export default function BookingsClient({ initialBookings, bookableAssets, curren
           </div>
         </CardContent>
       </Card>
+
+      {/* Booking Conflicts Alert Section */}
+      {(() => {
+        const activeBookings = initialBookings.filter(b => b.status === "UPCOMING" || b.status === "ONGOING");
+        const conflicts: { b1: any; b2: any }[] = [];
+        
+        for (let i = 0; i < activeBookings.length; i++) {
+          for (let j = i + 1; j < activeBookings.length; j++) {
+            const b1 = activeBookings[i];
+            const b2 = activeBookings[j];
+            
+            if (b1.assetId === b2.assetId) {
+              const start1 = new Date(b1.startTime).getTime();
+              const end1 = new Date(b1.endTime).getTime();
+              const start2 = new Date(b2.startTime).getTime();
+              const end2 = new Date(b2.endTime).getTime();
+              
+              if (start1 < end2 && end1 > start2) {
+                conflicts.push({ b1, b2 });
+              }
+            }
+          }
+        }
+
+        if (conflicts.length === 0) return null;
+
+        return (
+          <Card className="border-destructive/40 bg-destructive/5 text-destructive-foreground">
+            <CardHeader className="pb-3 flex flex-row items-center gap-2 border-b border-destructive/15">
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              <CardTitle className="text-lg font-bold text-destructive">Scheduling Conflicts Detected</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                The following active reservations overlap in time for the same resource. Please reschedule or cancel one of them to resolve the conflict.
+              </p>
+              <div className="grid gap-3">
+                {conflicts.map(({ b1, b2 }, idx) => (
+                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-destructive/20 bg-destructive/10 text-xs gap-3">
+                    <div>
+                      <span className="font-bold text-foreground">Resource: {b1.asset?.name} ({b1.asset?.assetTag})</span>
+                      <div className="mt-1 text-muted-foreground">
+                        <span className="font-semibold text-foreground">Booking A:</span> "{b1.title}" by {b1.user?.name || "User"} 
+                        <span className="font-mono text-3xs ml-1">({new Date(b1.startTime).toLocaleString()} - {new Date(b1.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})</span>
+                      </div>
+                      <div className="text-muted-foreground mt-0.5">
+                        <span className="font-semibold text-foreground">Booking B:</span> "{b2.title}" by {b2.user?.name || "User"} 
+                        <span className="font-mono text-3xs ml-1">({new Date(b2.startTime).toLocaleString()} - {new Date(b2.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0 self-end sm:self-center">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-foreground border-border hover:bg-muted"
+                        onClick={() => {
+                          setSelectedBooking(b1);
+                          setNewStartTime(new Date(b1.startTime).toISOString().slice(0, 16));
+                          setNewEndTime(new Date(b1.endTime).toISOString().slice(0, 16));
+                          setDetailModalOpen(true);
+                        }}
+                      >
+                        Reschedule A
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-foreground border-border hover:bg-muted"
+                        onClick={() => {
+                          setSelectedBooking(b2);
+                          setNewStartTime(new Date(b2.startTime).toISOString().slice(0, 16));
+                          setNewEndTime(new Date(b2.endTime).toISOString().slice(0, 16));
+                          setDetailModalOpen(true);
+                        }}
+                      >
+                        Reschedule B
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* View Switcher Tabs */}
       <div className="flex justify-between items-center border-b border-border">
