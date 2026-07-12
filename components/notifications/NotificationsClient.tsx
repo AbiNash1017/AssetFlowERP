@@ -233,7 +233,7 @@ export default function NotificationsClient({
   if (isManager) {
     tabOptions.push({
       id: "logs",
-      label: "System Activity Logs",
+      label: "Activity Logs",
       icon: <History className="h-4 w-4" />,
       badge: undefined,
     });
