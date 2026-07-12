@@ -44,16 +44,33 @@ export async function registerAsset(formData: FormData) {
     }
   }
 
+  const departmentId = formData.get("departmentId") as string;
   const assetTag = await generateAssetTag();
 
-  const asset = await db.asset.create({
-    data: {
-      ...parsed.data,
-      assetTag,
-      acquisitionDate: new Date(parsed.data.acquisitionDate),
-      acquisitionCost: parsed.data.acquisitionCost,
-      documents: documentsObj,
-    },
+  const asset = await db.$transaction(async (tx) => {
+    const createdAsset = await tx.asset.create({
+      data: {
+        ...parsed.data,
+        assetTag,
+        acquisitionDate: new Date(parsed.data.acquisitionDate),
+        acquisitionCost: parsed.data.acquisitionCost,
+        documents: documentsObj,
+        status: departmentId ? "ALLOCATED" : "AVAILABLE",
+      },
+    });
+
+    if (departmentId) {
+      await tx.allocation.create({
+        data: {
+          assetId: createdAsset.id,
+          departmentId,
+          status: "ACTIVE",
+          allocatedAt: new Date(),
+        },
+      });
+    }
+
+    return createdAsset;
   });
 
   await logActivity({
@@ -61,7 +78,7 @@ export async function registerAsset(formData: FormData) {
     action: "REGISTER_ASSET",
     entityType: "Asset",
     entityId: asset.id,
-    metadata: { assetTag, name: asset.name },
+    metadata: { assetTag, name: asset.name, departmentId: departmentId || undefined },
   });
 
   revalidatePath("/assets");

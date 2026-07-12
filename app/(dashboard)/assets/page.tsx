@@ -10,15 +10,19 @@ export default async function AssetsPage() {
   const session = await requireSession();
   const userRole = (session.user.role as Role) || "EMPLOYEE";
 
-  // Fetch assets and categories from database
-  const [assets, categories] = await Promise.all([
+  // Fetch assets, categories, and departments from database
+  const [assets, categories, departments] = await Promise.all([
     db.asset.findMany({
       include: {
         category: true,
         allocations: {
           where: { status: "ACTIVE" },
           include: {
-            user: true,
+            user: {
+              include: {
+                department: true,
+              },
+            },
             department: true,
           },
         },
@@ -32,12 +36,24 @@ export default async function AssetsPage() {
         name: "asc",
       },
     }),
+    db.department.findMany({
+      where: { status: "ACTIVE" },
+      orderBy: {
+        name: "asc",
+      },
+    }),
   ]);
+
+  const serializedAssets = assets.map((asset) => ({
+    ...asset,
+    acquisitionCost: Number(asset.acquisitionCost),
+  }));
 
   return (
     <AssetsClient
-      assets={assets}
+      assets={serializedAssets}
       categories={categories}
+      departments={departments}
       userRole={userRole}
     />
   );
