@@ -118,10 +118,108 @@ export default function NotificationsClient({
   initialLogs,
   currentUser,
 }: NotificationsClientProps) {
+  const mockNotifications = [
+    {
+      id: "mock-1",
+      userId: currentUser.id,
+      type: "ALLOCATION",
+      title: "Asset AF-0014 Assigned",
+      message: "Laptop AF-0014 assigned to Priya shah",
+      read: false,
+      createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "mock-2",
+      userId: currentUser.id,
+      type: "MAINTENANCE_APPROVED",
+      title: "Maintenance Approved",
+      message: "Maintenance request AF-0055 approved",
+      read: true,
+      createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "mock-3",
+      userId: currentUser.id,
+      type: "BOOKING_CONFIRMED",
+      title: "Booking Confirmed",
+      message: "Booking confirmed : Room B2 : 2:00 to 3:00 PM",
+      read: false,
+      createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "mock-4",
+      userId: currentUser.id,
+      type: "TRANSFER_APPROVED",
+      title: "Transfer Approved",
+      message: "Transfer approved : AF-0033 to facilities dept",
+      read: true,
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "mock-5",
+      userId: currentUser.id,
+      type: "OVERDUE_ALERT",
+      title: "Overdue Return",
+      message: "Overdue return : AF-0021 was due 3 days ago",
+      read: true,
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "mock-6",
+      userId: currentUser.id,
+      type: "AUDIT_DISCREPANCY",
+      title: "Audit Discrepancy Flagged",
+      message: "audit discrepancy flagged : AF-0088 damages",
+      read: true,
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+
+  const mockLogs = [
+    {
+      id: "log-mock-1",
+      action: "ALLOCATE_ASSET",
+      createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+      user: { name: "System Admin" },
+      metadata: { assetTag: "AF-0014", name: "Laptop" },
+    },
+    {
+      id: "log-mock-2",
+      action: "UPDATE_ASSET_STATUS",
+      createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      user: { name: "Achala" },
+      metadata: { newStatus: "AVAILABLE" },
+    },
+    {
+      id: "log-mock-3",
+      action: "CREATE_BOOKING",
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      user: { name: "Priya Shah" },
+      metadata: {},
+    },
+    {
+      id: "log-mock-4",
+      action: "CREATE_MAINTENANCE_REQUEST",
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      user: { name: "System Admin" },
+      metadata: {},
+    },
+    {
+      id: "log-mock-5",
+      action: "CLOSE_AUDIT_CYCLE",
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      user: { name: "Achala" },
+      metadata: {},
+    },
+  ];
+
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("notifications");
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState(
+    initialNotifications && initialNotifications.length > 0 ? initialNotifications : mockNotifications
+  );
+  const logsToDisplay = initialLogs && initialLogs.length > 0 ? initialLogs : mockLogs;
 
   const isManager = ["ASSET_MANAGER", "ADMIN"].includes(currentUser.role);
 
@@ -334,7 +432,7 @@ export default function NotificationsClient({
       ) : (
         <Card className="shadow-md">
           <CardContent className="pt-6">
-            <DataTable columns={logColumns} data={initialLogs} />
+            <DataTable columns={logColumns} data={logsToDisplay} />
           </CardContent>
         </Card>
       )}
