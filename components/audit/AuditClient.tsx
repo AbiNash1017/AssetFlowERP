@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Modal } from "@/components/ui";
 import { DataTable } from "@/components/ui/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { ClipboardCheck, Plus, Play, Calendar, UserCheck, CheckCircle2 } from "lucide-react";
 import AuditCycleForm from "./AuditCycleForm";
+import { closeAuditCycle } from "@/app/actions/audit";
+import { toast } from "sonner";
 
 interface AuditClientProps {
   initialCycles: any[];
@@ -22,6 +24,7 @@ interface AuditClientProps {
 
 export default function AuditClient({ initialCycles, departments, users, currentUser }: AuditClientProps) {
   const [createOpen, setCreateOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const isManager = ["ASSET_MANAGER", "ADMIN"].includes(currentUser.role);
 
   // Departments map for quick code resolution
@@ -29,10 +32,29 @@ export default function AuditClient({ initialCycles, departments, users, current
     return new Map(departments.map((d) => [d.id, d]));
   }, [departments]);
 
+  const handleCloseCycle = (cycleId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to close this audit cycle? This will lock all audit entries and update any assets marked as MISSING to LOST status."
+      )
+    )
+      return;
+
+    startTransition(async () => {
+      const res = await closeAuditCycle(cycleId);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Audit cycle closed successfully. Missing assets updated to LOST.");
+        window.location.reload();
+      }
+    });
+  };
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
-      header: "Cycle Name",
+      header: "Asset",
       cell: ({ row }) => (
         <div>
           <span className="font-semibold text-foreground">{row.getValue("name")}</span>
@@ -44,7 +66,7 @@ export default function AuditClient({ initialCycles, departments, users, current
     },
     {
       accessorKey: "scope",
-      header: "Audit Scope",
+      header: "Location",
       cell: ({ row }) => {
         const scopeType = row.getValue("scope") as string;
         const scopeId = row.original.scopeId;
@@ -93,32 +115,6 @@ export default function AuditClient({ initialCycles, departments, users, current
       },
     },
     {
-      accessorKey: "progress",
-      header: "Progress",
-      cell: ({ row }) => {
-        const total = row.original.totalAssets || 0;
-        const audited = row.original.auditedCount || 0;
-        const pct = total > 0 ? Math.round((audited / total) * 100) : 0;
-
-        return (
-          <div className="w-[140px] space-y-1">
-            <div className="flex justify-between text-3xs font-semibold">
-              <span className="text-muted-foreground">
-                {audited} / {total} Assets
-              </span>
-              <span className="text-foreground">{pct}%</span>
-            </div>
-            <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-              <div
-                className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(pct, 100)}%` }}
-              />
-            </div>
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
@@ -136,11 +132,27 @@ export default function AuditClient({ initialCycles, departments, users, current
       cell: ({ row }) => {
         const cycle = row.original;
         return (
-          <Link href={`/audit/${cycle.id}`}>
-            <Button variant="outline" size="sm" className="flex items-center gap-1.5">
-              <Play className="h-3 w-3" /> Audit Dashboard
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={`/audit/${cycle.id}`}>
+              <Button variant="outline" size="sm" className="flex items-center gap-1.5 cursor-pointer">
+                <Play className="h-3 w-3" /> Audit Dashboard
+              </Button>
+            </Link>
+            {isManager && cycle.status === "ACTIVE" && (
+              <Button
+                variant="destructive"
+                size="sm"
+                className="flex items-center gap-1.5 cursor-pointer"
+                disabled={isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleCloseCycle(cycle.id);
+                }}
+              >
+                Close Audit Cycle
+              </Button>
+            )}
+          </div>
         );
       },
     },
