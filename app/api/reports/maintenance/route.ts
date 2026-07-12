@@ -15,26 +15,49 @@ export async function GET() {
   }
 
   try {
-    // 1. Fetch maintenance requests with asset categories
-    const requests = await db.maintenanceRequest.findMany({
-      include: {
-        asset: {
-          include: {
-            category: true,
+    // 1. Fetch categories and active assets due for maintenance (condition POOR or FAIR)
+    const [allCategories, requests, dueAssets] = await Promise.all([
+      db.assetCategory.findMany({}),
+      db.maintenanceRequest.findMany({
+        include: {
+          asset: {
+            include: {
+              category: true,
+            },
           },
         },
-      },
+      }),
+      db.asset.findMany({
+        where: {
+          status: { notIn: ["RETIRED", "DISPOSED"] },
+          condition: { in: ["POOR", "FAIR"] },
+        },
+        select: {
+          categoryId: true,
+        },
+      }),
+    ]);
+
+    // Count due assets per category ID
+    const categoryDueCounts: Record<string, number> = {};
+    dueAssets.forEach((a) => {
+      categoryDueCounts[a.categoryId] = (categoryDueCounts[a.categoryId] || 0) + 1;
     });
 
-    // 2. Group by category
-    const categoryStats: Record<string, { count: number; resolvedCount: number; totalResolutionTimeMs: number }> = {};
+    // 2. Initialize and group by category
+    const categoryStats: Record<string, { id: string; count: number; resolvedCount: number; totalResolutionTimeMs: number }> = {};
+    allCategories.forEach((cat) => {
+      categoryStats[cat.name] = { id: cat.id, count: 0, resolvedCount: 0, totalResolutionTimeMs: 0 };
+    });
+
     const priorityStats = { LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0 };
     const statusStats = { PENDING: 0, APPROVED: 0, REJECTED: 0, IN_PROGRESS: 0, RESOLVED: 0 };
 
     requests.forEach((req) => {
       const catName = req.asset.category.name;
+      // Safeguard if a category was deleted/missing
       if (!categoryStats[catName]) {
-        categoryStats[catName] = { count: 0, resolvedCount: 0, totalResolutionTimeMs: 0 };
+        categoryStats[catName] = { id: req.asset.category.id, count: 0, resolvedCount: 0, totalResolutionTimeMs: 0 };
       }
       categoryStats[catName].count += 1;
 
@@ -67,6 +90,7 @@ export async function GET() {
         count: stats.count,
         resolved: stats.resolvedCount,
         avgResolutionHours,
+        dueForMaintenance: categoryDueCounts[stats.id] || 0,
       };
     });
 

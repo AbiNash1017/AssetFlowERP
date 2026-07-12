@@ -211,7 +211,7 @@ export default function ReportsClient({ currentUser }: ReportsClientProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-md">
               <CardHeader>
-                <CardTitle className="text-base font-bold text-foreground">Most Allocated Resources</CardTitle>
+                <CardTitle className="text-base font-bold text-foreground">Most Allocated Assets</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {utilizationData.mostActive.length === 0 ? (
@@ -232,7 +232,7 @@ export default function ReportsClient({ currentUser }: ReportsClientProps) {
 
             <Card className="shadow-md">
               <CardHeader>
-                <CardTitle className="text-base font-bold text-foreground">Completely Idle Assets</CardTitle>
+                <CardTitle className="text-base font-bold text-foreground">Idle Assets</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {utilizationData.idle.length === 0 ? (
@@ -317,6 +317,53 @@ export default function ReportsClient({ currentUser }: ReportsClientProps) {
               </CardContent>
             </Card>
           </div>
+
+          {/* Maintenance Table Grid */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-base font-bold">Category-wise Maintenance Stats</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                data={maintenanceData.frequency}
+                columns={[
+                  {
+                    accessorKey: "category",
+                    header: "Asset Category",
+                    cell: ({ row }) => <span className="font-semibold">{row.getValue("category")}</span>,
+                  },
+                  {
+                    accessorKey: "count",
+                    header: "Total Tickets Raised",
+                  },
+                  {
+                    accessorKey: "resolved",
+                    header: "Resolved Tickets",
+                  },
+                  {
+                    accessorKey: "avgResolutionHours",
+                    header: "Avg Resolution Time",
+                    cell: ({ row }) => <span>{row.getValue("avgResolutionHours")} Hours</span>,
+                  },
+                  {
+                    accessorKey: "dueForMaintenance",
+                    header: "Assets Due for Maintenance",
+                    cell: ({ row }) => {
+                      const count = row.getValue("dueForMaintenance") as number;
+                      return count > 0 ? (
+                        <Badge className="font-bold border border-red-500/20 bg-red-500/10 text-red-500">
+                          {count} {count === 1 ? "Asset" : "Assets"} Due
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">0 / Clean</span>
+                      );
+                    },
+                  },
+                ]}
+                emptyMessage="No category-wise maintenance statistics available."
+              />
+            </CardContent>
+          </Card>
         </div>
       )}
 
