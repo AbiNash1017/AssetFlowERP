@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { signOut } from "@/lib/auth-client";
 import useUIStore from "@/store/useUIStore";
 import useNotificationStore from "@/store/useNotificationStore";
@@ -16,6 +17,7 @@ interface TopNavProps {
     name: string;
     email: string;
     role: string;
+    image?: string | null;
   };
 }
 
@@ -119,9 +121,13 @@ export default function TopNav({ user }: TopNavProps) {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-1.5 focus:outline-none cursor-pointer"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20 hover:bg-primary/25 transition-all">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            {user.image ? (
+              <img src={user.image} alt={user.name} className="h-8 w-8 rounded-full object-cover border border-primary/20 hover:bg-primary/25 transition-all" />
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20 hover:bg-primary/25 transition-all">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
           </button>
 
           {dropdownOpen && (
@@ -137,6 +143,15 @@ export default function TopNav({ user }: TopNavProps) {
                   <span className="font-semibold block text-foreground truncate">{user.name}</span>
                   <span className="truncate block mt-0.5">{user.email}</span>
                 </div>
+
+                <Link
+                  href="/settings"
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <UserIcon className="h-4 w-4 text-muted-foreground" />
+                  <span>Account Settings</span>
+                </Link>
                 
                 <button
                   onClick={handleSignOut}

@@ -131,15 +131,22 @@ export default function Sidebar({ user }: SidebarProps) {
         </div>
 
         {/* User Card */}
-        <div className="p-3 border-b border-border bg-muted/40 flex justify-center">
-          <div className="flex items-center gap-3 w-full justify-center">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm border border-primary/20" title={user.name}>
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+        <div className={`p-3 border-b border-border bg-muted/40 flex ${sidebarOpen ? "px-4" : "justify-center"}`}>
+          <div className={`flex items-center gap-3 w-full ${sidebarOpen ? "justify-start" : "justify-center"}`}>
+            {user.image ? (
+              <img src={user.image} alt={user.name} className="h-10 w-10 rounded-full object-cover border border-primary/20 shrink-0" />
+            ) : (
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm border border-primary/20" title={user.name}>
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             {sidebarOpen && (
-              <div className="overflow-hidden animate-in fade-in duration-300">
-                <h4 className="text-sm font-semibold truncate text-foreground">{user.name}</h4>
-                <span className="inline-flex items-center rounded-full bg-secondary/15 px-2 py-0.5 text-3xs font-medium text-secondary border border-secondary/10 mt-0.5">
+              <div className="overflow-hidden animate-in fade-in duration-300 flex-1 min-w-0 text-left">
+                <h4 className="text-sm font-semibold truncate text-foreground" title={user.name}>{user.name}</h4>
+                <span 
+                  className="inline-flex items-center rounded-full bg-secondary/15 px-2 py-0.5 text-[10px] font-semibold text-secondary border border-secondary/10 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[145px]" 
+                  title={ROLE_LABELS[userRole]}
+                >
                   {ROLE_LABELS[userRole]}
                 </span>
               </div>
